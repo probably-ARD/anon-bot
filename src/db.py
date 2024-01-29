@@ -3,6 +3,8 @@ import sqlite3
 import datetime
 from dotenv import load_dotenv
 
+from aiogram.types import Message
+
 from settings import Settings
 
 
@@ -31,6 +33,14 @@ def _create_tables() -> None:
     '''
     global cur, db
     cur.execute(
+        '''CREATE TABLE IF NOT EXISTS users(
+            user_tg_id INTEGER,
+            date STRING
+        )'''
+    )
+    db.commit()
+    
+    cur.execute(
         '''CREATE TABLE IF NOT EXISTS msgs_queue(
             user_tg_id INTEGER,
             user_chat_id INTEGER,
@@ -40,8 +50,7 @@ def _create_tables() -> None:
             username STRING,
             date STRING,
             text STRING,
-            has_photo BOOLEAN,
-            moder_tg_id INTEGER
+            has_photo BOOLEAN
         )'''
     )
     db.commit()
@@ -62,6 +71,7 @@ def _create_tables() -> None:
             fullname STRING,
             username STRING,
             date STRING,
+            msg_id INTEGER,
             text STRING,
             has_photo BOOLEAN
         )'''
@@ -74,9 +84,36 @@ def _create_tables() -> None:
             fullname STRING,
             username STRING,
             date STRING,
+            msg_id INTEGER,
             text STRING,
             has_photo BOOLEAN,
             reason STRING
         )'''
     )
     db.commit()
+
+def _get_new_msg_id() -> int:
+    '''
+    returns msg_id to new message
+    '''
+    pass
+
+
+def add_new_msg(msg: Message) -> int:
+    '''
+    Adding message to msgs_queue table
+    Return msg_id: int
+    '''
+    if msg.photo:
+        has_photo = True
+        text = msg.caption
+    else:
+        has_photo = False
+        text = msg.text
+     
+    cur.execute(
+        '''INSERT INTO msgs_queue VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)''',
+        (
+            
+        )
+    )

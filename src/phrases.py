@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class Bot(Enum):
+class BotPhrases(Enum):
     CMD_BOT_START = '''
     ███████████████████████████████████████████████
     ██▀▄─██▄─▀█▄─▄█─▄▄─█▄─▀█▄─▄███▄─▄─▀█─▄▄─█─▄─▄─█
