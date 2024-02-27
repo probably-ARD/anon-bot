@@ -6,8 +6,8 @@ from colorama import Fore, Back
 
 from dotenv import load_dotenv
 
-from aiogram.types import Message
-from aiogram import Bot, Dispatcher, Router
+from aiogram import Bot, Dispatcher
+from aiogram.exceptions import TelegramNetworkError
 
 from src import db
 from src.logger import get_logger
@@ -19,8 +19,10 @@ colorama.init(autoreset=True)
 logger = get_logger('bot')
 
 
+@logger.catch()
 async def main():
     load_dotenv('.env')
+    
     db.init()
     
     token = os.getenv("TOKEN")
@@ -28,13 +30,21 @@ async def main():
     dp = Dispatcher()
     
     await bot.delete_webhook(drop_pending_updates=True)
-    await dp.start_polling(bot)
+    
+    try:
+        await dp.start_polling(bot)
+    
+    except TelegramNetworkError:
+        logger.info('Connection reset by peer, retry after 1 sec')
+    
+    except Exception:
+        logger.critical()
 
 
 if __name__ == '__main__':
-    print(Fore.RED + BotPhrases.CMD_BOT_START.value)
-    print(Back.GREEN + BotPhrases.BOT_START.value)
-    logger.info(BotPhrases.BOT_START.value)
+    print(Fore.RED + BotPhrases.CMD_BOT_START)
+    print(Back.GREEN + BotPhrases.BOT_START)
+    logger.info(BotPhrases.BOT_START)
     
     try:
         asyncio.run(main())
@@ -43,5 +53,5 @@ if __name__ == '__main__':
         logger.info('Bot stopped by keyboard')
     
     finally:
-        logger.info(BotPhrases.BOT_STOP.value)
-        print(Back.RED + BotPhrases.BOT_STOP.value)
+        logger.info(BotPhrases.BOT_STOP)
+        print(Back.RED + BotPhrases.BOT_STOP)
