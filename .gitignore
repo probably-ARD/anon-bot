@@ -3,5 +3,5 @@
 .db
 __pycache__
 .vscode
-\logs
+*.log
 __init__.py

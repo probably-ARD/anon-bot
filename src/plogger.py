@@ -28,7 +28,7 @@ class _ColoredFormatter(logging.Formatter):
 
         return formatter.format(record)
 
-def get_pretty_logger(level: str = logging.DEBUG, name: str | None = None, path: str | None = None) -> logging.Logger:
+def get_pretty_logger(name: str | None = None, path: str | None = None, level: str = logging.DEBUG) -> logging.Logger:
     '''
     returns logger with pretty formatter
     (check _ColoredFormatter.format to change format)
@@ -43,5 +43,13 @@ def get_pretty_logger(level: str = logging.DEBUG, name: str | None = None, path:
 
     if path is not None:
         plogger.addHandler(logging.FileHandler(path))
+        plogger.handlers[1].setFormatter(
+            logging.Formatter(
+                '%(asctime)s | %(name)s | %(levelname)s -> %(message)s',
+                datefmt='%d.%m.%Y --- %H:%M'
+            )
+        )
     
     return plogger
+
+# ? мб запилить basicConfig

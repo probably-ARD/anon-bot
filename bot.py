@@ -10,16 +10,15 @@ from aiogram import Bot, Dispatcher
 from aiogram.exceptions import TelegramNetworkError
 
 from src import db
-from src.logger import get_logger
+from src.plogger import get_pretty_logger
 from src.phrases import BotPhrases
 
 
 colorama.init(autoreset=True)
 
-logger = get_logger('bot')
+logger = get_pretty_logger('main', r'log.log')
 
 
-@logger.catch()
 async def main():
     load_dotenv('.env')
     
@@ -37,8 +36,8 @@ async def main():
     except TelegramNetworkError:
         logger.info('Connection reset by peer, retry after 1 sec')
     
-    except Exception:
-        logger.critical()
+    except Exception as e:
+        logger.critical(e, stack_info=True)
 
 
 if __name__ == '__main__':
@@ -53,5 +52,6 @@ if __name__ == '__main__':
         logger.info('Bot stopped by keyboard')
     
     finally:
+        db.close()
         logger.info(BotPhrases.BOT_STOP)
         print(Back.RED + BotPhrases.BOT_STOP)

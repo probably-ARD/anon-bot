@@ -1,40 +1,23 @@
-инфа
-дебаг
-ворнинг
-критикал
-инфа
-дебаг
-ворнинг
-критикал
-инфа
-дебаг
-ворнинг
-критикал
-инфа
-дебаг
-ворнинг
-критикал
-инфа
-дебаг
-ворнинг
-критикал
-инфа
-дебаг
-ворнинг
-критикал
-инфа
-дебаг
-ворнинг
-критикал
-инфа
-дебаг
-ворнинг
-критикал
-инфа
-дебаг
-ворнинг
-критикал
-инфа
-дебаг
-ворнинг
-критикал
+05.03.2024 --- 22:17 |   main   | INFO -> Bot started
+05.03.2024 --- 22:17 |   main   | CRITICAL -> Critical error
+division by zero
+Stack (most recent call last):
+  File "d:\projects\python projects\anon\anon_bot_v2\bot.py", line 50, in <module>
+    asyncio.run(main())
+  File "C:\python\python311\Lib\asyncio\runners.py", line 190, in run
+    return runner.run(main)
+  File "C:\python\python311\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+  File "C:\python\python311\Lib\asyncio\base_events.py", line 640, in run_until_complete
+    self.run_forever()
+  File "C:\python\python311\Lib\asyncio\windows_events.py", line 321, in run_forever
+    super().run_forever()
+  File "C:\python\python311\Lib\asyncio\base_events.py", line 607, in run_forever
+    self._run_once()
+  File "C:\python\python311\Lib\asyncio\base_events.py", line 1922, in _run_once
+    handle._run()
+  File "C:\python\python311\Lib\asyncio\events.py", line 80, in _run
+    self._context.run(self._callback, *self._args)
+  File "d:\projects\python projects\anon\anon_bot_v2\bot.py", line 41, in main
+    logger.critical(f'Critical error\n{e}', stack_info=True)
+05.03.2024 --- 22:17 |   main   | INFO -> Bot stopped

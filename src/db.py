@@ -27,6 +27,11 @@ def init() -> None:
         pass
 
 
+def close() -> None:
+    global db
+    db.close()
+
+
 def _create_tables() -> None:
     '''
     Creating db tables if they not exists
