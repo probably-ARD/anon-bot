@@ -14,9 +14,11 @@ from src.plogger import get_pretty_logger
 from src.phrases import BotPhrases
 
 
+
+
 colorama.init(autoreset=True)
 
-logger = get_pretty_logger('main', r'log.log')
+logger = get_pretty_logger('main')
 
 
 async def main():

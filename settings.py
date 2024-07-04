@@ -13,3 +13,5 @@ class Settings():
     
     PHOTO_AUTO_DELETE = True
     # автоматическое удаление фотографий после публикации/отказа в ней
+
+    LOG_PATH = r'bot_logs.log'

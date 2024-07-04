@@ -3,7 +3,7 @@ import sqlite3
 import datetime
 from dotenv import load_dotenv
 
-from aiogram.types import Message
+from aiogram.types import Message, User
 
 from settings import Settings
 
@@ -144,3 +144,7 @@ def add_new_msg(msg: Message) -> int:
     db.commit()
 
     return msg_id
+
+
+def add_new_user(user: User):
+    pass
