@@ -5,3 +5,4 @@ __pycache__
 .vscode
 *.log
 __init__.py
+\photos

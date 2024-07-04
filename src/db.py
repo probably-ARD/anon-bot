@@ -1,11 +1,16 @@
 import os
 import sqlite3
-import datetime
-from dotenv import load_dotenv
 
-from aiogram.types import Message, User
+from datetime import datetime
 
-from settings import Settings
+from custom_logging import getLogger
+from settings import DB_PATH
+
+
+logger = getLogger('db')
+
+class Status():
+    
 
 
 def init() -> None:
@@ -14,11 +19,13 @@ def init() -> None:
     '''
     # init db, cur
     global db, cur
-    db = sqlite3.connect(r'anon_bot.db')
+    db = sqlite3.connect(DB_PATH)
     cur = db.cursor()
-
+    
     # creating tables
     _create_tables()
+
+    logger.info('Инициализация базы данных')
 
     # making dir for photos
     try:
@@ -30,6 +37,7 @@ def init() -> None:
 def close() -> None:
     global db
     db.close()
+    logger.info('база данных закрыта')
 
 
 def _create_tables() -> None:
@@ -40,111 +48,53 @@ def _create_tables() -> None:
     cur.execute(
         '''CREATE TABLE IF NOT EXISTS users(
             user_tg_id INTEGER,
-            date STRING
-        )'''
-    )
-    db.commit()
-    
-    cur.execute(
-        '''CREATE TABLE IF NOT EXISTS msgs_queue(
-            user_tg_id INTEGER,
-            user_chat_id INTEGER,
-            user_msg_id INTEGER,
-            msg_id INTEGER,
+            date STRING,
             fullname STRING,
             username STRING,
-            date STRING,
-            text STRING,
-            has_photo BOOLEAN
+            status STRING,
+            old_info STRING
         )'''
     )
     db.commit()
 
     cur.execute(
-        '''CREATE TABLE IF NOT EXISTS moders(
+        '''CREATE TABLE IF NOT EXISTS moderators(
             moder_tg_id INTEGER,
-            moderating_msg_id INTEGER,
-            count_msgs_tg_id INTEGER,
-            not_msgs_tg_id INTEGER
+            moderating_msgs_msg_id INTEGER
         )'''
     )
     db.commit()
 
     cur.execute(
-        '''CREATE TABLE IF NOT EXISTS approved_msgs(
-            user_tg_id INTEGER,
-            fullname STRING,
-            username STRING,
-            date STRING,
-            msg_id INTEGER,
-            text STRING,
-            has_photo BOOLEAN
+        '''CREATE TABLE IF NOT EXISTS messages(
+        msg_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_tg_id INTEGER
+        date STRING,
+        text STRING,
+        has_photo BOOLEAN,
+        status STRING,
+        reason_if_refused STRING
         )'''
     )
-    db.commit()
 
+
+# TODO написать функцию обновления данных юзера при написании им сообщения
+# TODO добавить в логи присоединения и удаления пользователей с канала
+# TODO добавить сохранение комментов (опционально)
+
+def add_user(
+    user_tg_id: int,
+    fullname: str,
+    username: str
+    ):
     cur.execute(
-        '''CREATE TABLE IF NOT EXISTS refused_msgs(
-            user_tg_id INTEGER,
-            fullname STRING,
-            username STRING,
-            date STRING,
-            msg_id INTEGER,
-            text STRING,
-            has_photo BOOLEAN,
-            reason STRING
-        )'''
+        'INSERT INTO users VALUES (?, ?, ?, ?, ?, ?)',
+        (int(user_tg_id), datetime.today, fullname, username, '')
     )
-    db.commit()
 
-def _get_id_to_new_msg() -> int:
-    '''
-    returns msg_id to new message
-    '''
+def _check_user_id_in_db(user_tg_id: int) -> bool:
     global cur
-    id = len([id[0] for id in cur.execute("""SELECT msg_id FROM messages""")])
-    return id
-
-
-def add_new_msg(msg: Message) -> int:
-    '''
-    Adding message to msgs_queue table
-    Return msg_id: int
-    '''
-    global db, cur
-    if msg.photo:
-        has_photo = True
-        text = msg.caption
-    else:
-        has_photo = False
-        text = msg.text
-
-    msg_id = _get_id_to_new_msg()
-    date = str(datetime.date.today())
-    
-    # msgs_queue structure
-    # user_tg_id INTEGER,
-    # user_chat_id INTEGER,
-    # user_msg_id INTEGER,
-    # msg_id INTEGER,
-    # fullname STRING,
-    # username STRING,
-    # date STRING,
-    # text STRING,
-    # has_photo BOOLEAN
-    
-    cur.execute(
-        '''INSERT INTO msgs_queue VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)''',
-        (
-            msg.from_user.id, msg.chat.id, msg.message_id, 
-            msg_id, msg.from_user.full_name, msg.from_user.username, 
-            date, text, has_photo
-        )
-    )
-    db.commit()
-
-    return msg_id
-
-
-def add_new_user(user: User):
-    pass
+    id = cur.execute('SELECT user_tg_id FROM users WHERE user_tg_id = ?', user_tg_id)
+    if len(id) == 1:
+        return True
+    return False

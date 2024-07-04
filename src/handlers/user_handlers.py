@@ -16,4 +16,3 @@ user_router = Router()
 async def cmd_start(msg: Message, cmd: CommandObject):
     'start handler'
     # TODO дописать, бд тоже
-
